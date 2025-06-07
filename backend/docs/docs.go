@@ -24,6 +24,56 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/aaa": {
+            "post": {
+                "description": "Receives AAA settings and an authorization token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Process AAA settings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Settings to process",
+                        "name": "settings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.AAASettingsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully processed settings",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.AAAResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.AAAResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Missing Authorization header",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.AAAResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/greet": {
             "get": {
                 "description": "Get a greeting message from the backend",
@@ -36,6 +86,49 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/handlers.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/jwt": {
+            "post": {
+                "description": "Receives a JWT token in the body, decodes it, and returns the claims.\nNote: This endpoint uses ParseUnverified for simplicity to show claims. For production, you MUST validate the token's signature and claims (e.g., 'exp', 'iss', 'aud').",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Process JWT",
+                "parameters": [
+                    {
+                        "description": "JWT Token to process",
+                        "name": "token_payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.JWTRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully decoded JWT with claims",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.JWTResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid input (e.g., missing token, malformed JSON)",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.JWTResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity - Invalid JWT (e.g., parsing error, failed to extract claims)",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.JWTResponse"
                         }
                     }
                 }
@@ -60,6 +153,59 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "handlers.AAAResponse": {
+            "type": "object",
+            "properties": {
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.AAASettingsRequest": {
+            "type": "object",
+            "required": [
+                "settingName"
+            ],
+            "properties": {
+                "settingName": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "handlers.JWTRequest": {
+            "type": "object",
+            "required": [
+                "token"
+            ],
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                }
+            }
+        },
+        "handlers.JWTResponse": {
+            "type": "object",
+            "properties": {
+                "claims": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "text": {
+                    "description": "For general messages or errors",
+                    "type": "string"
+                }
+            }
+        },
         "handlers.Message": {
             "type": "object",
             "properties": {
@@ -67,6 +213,13 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

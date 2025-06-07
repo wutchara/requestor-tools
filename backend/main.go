@@ -29,6 +29,10 @@ import (
 // @host localhost:8080
 // @BasePath /
 // @schemes http
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	router := gin.Default()
 	docs.SwaggerInfo.BasePath = "/api/v1"
@@ -53,9 +57,11 @@ func main() {
 
 	v1 := router.Group("/api/v1")
 	{
-		eg := v1.Group("")
+		ge := v1.Group("")
 		{
-			eg.GET("/greet", handlers.Greet) // Use handler from the handlers package
+			ge.GET("/greet", handlers.Greet)             // Use handler from the handlers package
+			ge.POST("/jwt", handlers.ProcessJWT)         // Add the new JWT endpoint
+			ge.POST("/aaa", handlers.ProcessAAASettings) // Add the new POST endpoint
 		}
 	}
 	router.GET("/swagger-ui/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

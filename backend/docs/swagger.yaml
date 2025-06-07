@@ -1,5 +1,40 @@
 basePath: /
 definitions:
+  handlers.AAAResponse:
+    properties:
+      names:
+        items:
+          type: string
+        type: array
+      text:
+        type: string
+    type: object
+  handlers.AAASettingsRequest:
+    properties:
+      settingName:
+        items:
+          type: string
+        type: array
+    required:
+    - settingName
+    type: object
+  handlers.JWTRequest:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        type: string
+    required:
+    - token
+    type: object
+  handlers.JWTResponse:
+    properties:
+      claims:
+        additionalProperties: true
+        type: object
+      text:
+        description: For general messages or errors
+        type: string
+    type: object
   handlers.Message:
     properties:
       text:
@@ -19,6 +54,39 @@ info:
   title: Requestor Tools API
   version: "1.0"
 paths:
+  /aaa:
+    post:
+      consumes:
+      - application/json
+      description: Receives AAA settings and an authorization token.
+      parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Settings to process
+        in: body
+        name: settings
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.AAASettingsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully processed settings
+          schema:
+            $ref: '#/definitions/handlers.AAAResponse'
+        "400":
+          description: Bad Request - Invalid input
+          schema:
+            $ref: '#/definitions/handlers.AAAResponse'
+        "401":
+          description: Unauthorized - Missing Authorization header
+          schema:
+            $ref: '#/definitions/handlers.AAAResponse'
+      summary: Process AAA settings
   /greet:
     get:
       description: Get a greeting message from the backend
@@ -30,6 +98,38 @@ paths:
           schema:
             $ref: '#/definitions/handlers.Message'
       summary: Greet the user
+  /jwt:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Receives a JWT token in the body, decodes it, and returns the claims.
+        Note: This endpoint uses ParseUnverified for simplicity to show claims. For production, you MUST validate the token's signature and claims (e.g., 'exp', 'iss', 'aud').
+      parameters:
+      - description: JWT Token to process
+        in: body
+        name: token_payload
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.JWTRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully decoded JWT with claims
+          schema:
+            $ref: '#/definitions/handlers.JWTResponse'
+        "400":
+          description: Bad Request - Invalid input (e.g., missing token, malformed
+            JSON)
+          schema:
+            $ref: '#/definitions/handlers.JWTResponse'
+        "422":
+          description: Unprocessable Entity - Invalid JWT (e.g., parsing error, failed
+            to extract claims)
+          schema:
+            $ref: '#/definitions/handlers.JWTResponse'
+      summary: Process JWT
   /page/start:
     get:
       description: Renders a dynamic HTML start page.
@@ -43,4 +143,9 @@ paths:
       summary: Start Page
 schemes:
 - http
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
