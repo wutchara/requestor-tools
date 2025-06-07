@@ -35,7 +35,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/main.Message"
+                            "$ref": "#/definitions/handlers.Message"
                         }
                     }
                 }
@@ -60,7 +60,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "main.Message": {
+        "handlers.Message": {
             "type": "object",
             "properties": {
                 "text": {

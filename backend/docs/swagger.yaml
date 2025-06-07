@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  main.Message:
+  handlers.Message:
     properties:
       text:
         type: string
@@ -28,7 +28,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/main.Message'
+            $ref: '#/definitions/handlers.Message'
       summary: Greet the user
   /page/start:
     get:
