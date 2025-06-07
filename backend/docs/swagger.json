@@ -1,0 +1,69 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "This is the API for the Requestor Tools backend.",
+        "title": "Requestor Tools API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "https://www.example.com/support",
+            "email": "support@example.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/greet": {
+            "get": {
+                "description": "Get a greeting message from the backend",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Greet the user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/main.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/page/start": {
+            "get": {
+                "description": "Renders a dynamic HTML start page.",
+                "produces": [
+                    "text/html"
+                ],
+                "summary": "Start Page",
+                "responses": {
+                    "200": {
+                        "description": "HTML content of the start page",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "main.Message": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

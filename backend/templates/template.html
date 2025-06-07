@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{.Title}}</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        background-color: #eaf5ff;
+        text-align: center;
+        padding-top: 50px;
+      }
+      div {
+        background-color: white;
+        padding: 2em;
+        border-radius: 8px;
+        display: inline-block;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #0056b3;
+      }
+      p {
+        font-size: 1.2em;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h1>{{.Title}}</h1>
+
+      <p>
+        <span id="time-prefix">{{.TimePrefix}}</span
+        ><span id="current-time">{{.InitialTime}}</span>
+      </p>
+    </div>
+
+    <script>
+      function updateCurrentTime() {
+        const timeElement = document.getElementById("current-time");
+        if (timeElement) {
+          const now = new Date();
+          let hours = now.getHours();
+          const minutes = now.getMinutes().toString().padStart(2, "0");
+          const seconds = now.getSeconds().toString().padStart(2, "0");
+          const ampm = hours >= 12 ? "PM" : "AM";
+
+          hours = hours % 12;
+          hours = hours ? hours : 12; // Convert hour '0' to '12' for 12 AM/PM format
+
+          // This format aims to match Go's "3:04:05 PM"
+          timeElement.textContent = `${hours}:${minutes}:${seconds} ${ampm}`;
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // Update the time immediately when the page loads
+        updateCurrentTime();
+        // Then, set an interval to update the time every second
+        setInterval(updateCurrentTime, 1000);
+      });
+    </script>
+  </body>
+</html>

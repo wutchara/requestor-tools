@@ -2,4 +2,6 @@
 
 go run main.go
 
+swag init
+
 ## FE
