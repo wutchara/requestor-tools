@@ -59,9 +59,13 @@ func main() {
 	{
 		ge := v1.Group("")
 		{
-			ge.GET("/greet", handlers.Greet)             // Use handler from the handlers package
-			ge.POST("/jwt", handlers.ProcessJWT)         // Add the new JWT endpoint
-			ge.POST("/aaa", handlers.ProcessAAASettings) // Add the new POST endpoint
+			ge.GET("/greet", handlers.Greet)     // Use handler from the handlers package
+			ge.POST("/jwt", handlers.ProcessJWT) // Add the new JWT endpoint
+		}
+
+		bot := v1.Group("/bot")
+		{
+			bot.POST("/aaa", handlers.ProcessAAASettings) // Add the new POST endpoint
 		}
 	}
 	router.GET("/swagger-ui/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
