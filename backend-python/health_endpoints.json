@@ -2,7 +2,67 @@
   {
     "name": "Backend Service (from .env.sample)",
     "url": "https://9bcf-2405-9800-b540-c449-1c7f-67d9-6e61-96ec.ngrok-free.app/health",
-    "requires_auth": true
+    "requires_auth": false
+  },
+  {
+    "name": "[Bot-router-dev]",
+    "url": "https://app-gateway-wsteams.dev-workspace.t-lseg.com/health",
+    "requires_auth": false
+  },
+  {
+    "name": "[Bot-router-qa]",
+    "url": "https://app-gateway-wsteams.qa-workspace.t-lseg.com/health",
+    "requires_auth": false
+  },
+  {
+    "name": "[Bot-router-ppe]",
+    "url": "https://app-gateway-wsteams.ppe-workspace.t-lseg.com/health",
+    "requires_auth": false
+  },
+  {
+    "name": "[Bot-router-prod]",
+    "url": "https://app-gateway-wsteams.workspace.lseg.com/health",
+    "requires_auth": false
+  },
+  {
+    "name": "[Bot-handler-dev]",
+    "url": "https://app-gateway-wsteams.dev-workspace.t-lseg.com/bot-handler/healthcheck",
+    "requires_auth": false
+  },
+  {
+    "name": "[Bot-handler-qa]",
+    "url": "https://app-gateway-wsteams.qa-workspace.t-lseg.com/bot-handler/healthcheck",
+    "requires_auth": false
+  },
+  {
+    "name": "[Bot-handler-ppe]",
+    "url": "https://app-gateway-wsteams.ppe-workspace.t-lseg.com/bot-handler/healthcheck",
+    "requires_auth": false
+  },
+  {
+    "name": "[Bot-handler-prod]",
+    "url": "https://app-gateway-wsteams.workspace.lseg.com/bot-handler/healthcheck",
+    "requires_auth": false
+  },
+  {
+    "name": "[interop-dev]",
+    "url": "https://app-gateway-wsteams.dev-workspace.t-lseg.com/interop/health",
+    "requires_auth": false
+  },
+  {
+    "name": "[interop-qa]",
+    "url": "https://app-gateway-wsteams.qa-workspace.t-lseg.com/interop/health",
+    "requires_auth": false
+  },
+  {
+    "name": "[interop-ppe]",
+    "url": "https://app-gateway-wsteams.ppe-workspace.t-lseg.com/interop/health",
+    "requires_auth": false
+  },
+  {
+    "name": "[interop-prod]",
+    "url": "https://app-gateway-wsteams.workspace.lseg.com/interop/health",
+    "requires_auth": false
   },
   {
     "name": "Public Test API (No Auth)",
