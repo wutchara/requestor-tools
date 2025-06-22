@@ -1,0 +1,7 @@
+requests
+msal
+python-dotenv
+botbuilder-core
+botbuilder-schema
+botframework-connector
+aiohttp

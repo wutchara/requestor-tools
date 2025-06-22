@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Backend Service (from .env.sample)",
+    "url": "https://9bcf-2405-9800-b540-c449-1c7f-67d9-6e61-96ec.ngrok-free.app/health",
+    "requires_auth": true
+  },
+  {
+    "name": "Public Test API (No Auth)",
+    "url": "https://api.publicapis.org/health",
+    "requires_auth": false
+  }
+]
