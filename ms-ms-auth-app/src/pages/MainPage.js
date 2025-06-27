@@ -21,9 +21,11 @@ import {
 } from "../utils/pkceUtils";
 import OboButton from "../components/OboButton"; // Keep this import
 import SignInButton from "../components/SignInButton"; // Add this import
+import UserList from "../components/UserList";
 
 export default function MainPage() {
   const [userProfile, setUserProfile] = useState(null);
+  const [profilePhoto, setProfilePhoto] = useState(null);
   const [error, setError] = useState(null);
   const [oboApiResponse, setOboApiResponse] = useState(null);
   const [oboApiError, setOboApiError] = useState(null);
@@ -40,6 +42,38 @@ export default function MainPage() {
       }
     }
   }, []);
+
+  useEffect(() => {
+    const fetchProfilePhoto = async () => {
+      const accessToken = getCookie("msAccessToken");
+      if (!userProfile || !accessToken) {
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          "https://graph.microsoft.com/v1.0/me/photo/$value",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const photoUrl = URL.createObjectURL(blob);
+          setProfilePhoto(photoUrl);
+        } else {
+          console.warn("Could not fetch profile photo. User may not have one.");
+        }
+      } catch (err) {
+        console.error("Error fetching profile photo:", err);
+      }
+    };
+
+    fetchProfilePhoto();
+  }, [userProfile]);
 
   const handleSignIn = async () => {
     setError(null);
@@ -61,22 +95,11 @@ export default function MainPage() {
         `&response_type=code` +
         `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
         `&response_mode=query` +
-        // Replace <YOUR_OBO_MIDDLETIER_API_CLIENT_ID> with the actual client ID of your "OBO MiddleTier API"
         `&scope=${encodeURIComponent(
-          `openid profile User.Read offline_access api://botid-${MS_CLIENT_ID}/access_as_user`
+          `offline_access api://botid-${MS_CLIENT_ID}/access_as_user`
         )}` +
         `&code_challenge=${challenge}` +
         `&code_challenge_method=S256`;
-
-      // const authUrl =
-      // `https://login.microsoftonline.com/${MS_TENANT_ID}/oauth2/v2.0/authorize?` +
-      // `client_id=${MS_CLIENT_ID}` +
-      // `&response_type=code` +
-      // `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-      // `&response_mode=query` +
-      // `&scope=openid%20profile%20User.Read` +
-      // `&code_challenge=${challenge}` +
-      // `&code_challenge_method=S256`;
 
       const popup = window.open(
         authUrl,
@@ -108,8 +131,11 @@ export default function MainPage() {
     sessionStorage.removeItem("pkceVerifier");
     setUserProfile(null);
     setError(null);
+    // Redirect to the start page, which is the origin of our configured redirect URI.
+    const postLogoutRedirectUri = new URL(REDIRECT_URI).origin;
+    console.log("postLogoutRedirectUri", postLogoutRedirectUri);
     const logoutUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=${encodeURIComponent(
-      window.location.origin
+      postLogoutRedirectUri
     )}`;
     window.location.href = logoutUrl;
   };
@@ -206,7 +232,10 @@ export default function MainPage() {
         {userProfile ? (
           <Box>
             <Avatar
-              src="https://placehold.co/100x100/1e293b/94a3b8?text=User"
+              src={
+                profilePhoto ||
+                "https://placehold.co/100x100/1e293b/94a3b8?text=User"
+              }
               alt={userProfile.displayName}
               sx={{
                 width: 96,
@@ -248,6 +277,8 @@ export default function MainPage() {
           </Box>
         )}
       </Paper>
+
+      {userProfile && <UserList />}
 
       {oboApiResponse && (
         <Paper
